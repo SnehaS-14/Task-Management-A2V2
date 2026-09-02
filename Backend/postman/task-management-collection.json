@@ -1,0 +1,236 @@
+{
+  "info": {
+    "name": "Task Management API",
+    "description": "Complete backend flow for the multi-user Task Management application.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success && json.data.token) {",
+                  "  pm.collectionVariables.set('token', json.data.token);",
+                  "  pm.collectionVariables.set('userId', json.data.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.success && json.data.token) {",
+                  "  pm.collectionVariables.set('token', json.data.token);",
+                  "  pm.collectionVariables.set('userId', json.data.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+          }
+        },
+        {
+          "name": "Search users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?search=john",
+              "host": ["{{baseUrl}}"], "path": ["api", "users"], "query": [{ "key": "search", "value": "john" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Create task",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Implement authentication\",\n  \"description\": \"Build JWT auth\",\n  \"status\": \"Todo\",\n  \"priority\": \"High\",\n  \"assignee\": \"{{userId}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/tasks", "host": ["{{baseUrl}}"], "path": ["api", "tasks"] }
+          }
+        },
+        {
+          "name": "List tasks",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/tasks", "host": ["{{baseUrl}}"], "path": ["api", "tasks"] }
+          }
+        },
+        {
+          "name": "Search + filter + sort + paginate",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks?search=auth&status=Todo&priority=High&limit=10&sortBy=createdAt&sortOrder=desc",
+              "host": ["{{baseUrl}}"], "path": ["api", "tasks"],
+              "query": [
+                { "key": "search", "value": "auth" },
+                { "key": "status", "value": "Todo" },
+                { "key": "priority", "value": "High" },
+                { "key": "limit", "value": "10" },
+                { "key": "sortBy", "value": "createdAt" },
+                { "key": "sortOrder", "value": "desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get task",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/tasks/:id", "host": ["{{baseUrl}}"], "path": ["api", "tasks", ":id"] }
+          }
+        },
+        {
+          "name": "Update task",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"In Progress\",\n  \"priority\": \"High\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/tasks/:id", "host": ["{{baseUrl}}"], "path": ["api", "tasks", ":id"] }
+          }
+        },
+        {
+          "name": "Delete task",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/tasks/:id", "host": ["{{baseUrl}}"], "path": ["api", "tasks", ":id"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Add comment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Authentication implementation is completed.\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/:taskId/comments",
+              "host": ["{{baseUrl}}"], "path": ["api", "tasks", ":taskId", "comments"]
+            }
+          }
+        },
+        {
+          "name": "Get comments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks/:taskId/comments",
+              "host": ["{{baseUrl}}"], "path": ["api", "tasks", ":taskId", "comments"]
+            }
+          }
+        },
+        {
+          "name": "Update comment",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Updated comment text\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/:commentId",
+              "host": ["{{baseUrl}}"], "path": ["api", "comments", ":commentId"]
+            }
+          }
+        },
+        {
+          "name": "Delete comment",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/:commentId",
+              "host": ["{{baseUrl}}"], "path": ["api", "comments", ":commentId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/health", "host": ["{{baseUrl}}"], "path": ["api", "health"] }
+          }
+        }
+      ]
+    }
+  ]
+}
