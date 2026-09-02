@@ -52,9 +52,7 @@ Run `npm run seed` before using these accounts. The seed command clears the conf
 | Role | Email | Password |
 | --- | --- | --- |
 <<<<<<< HEAD
-| Admin | `alice@example.com` | `Password123!` |
-| Manager | `bob@example.com` | `Password123!` |
-| Member | `charlie@example.com` | `Password123!` |
+
 =======
 | Admin | `sneha.shanmugam014@gmail.com` | `admin@123` |
 
