@@ -47,9 +47,8 @@ Run `npm run seed` before using these accounts. The seed command clears the conf
 
 | Role | Email | Password |
 | --- | --- | --- |
-| Admin | `alice@example.com` | `Password123!` |
-| Manager | `bob@example.com` | `Password123!` |
-| Member | `charlie@example.com` | `Password123!` |
+| Admin | `sneha.shanmugam014@gmail.com` | `admin@123` |
+
 
 To log in as the administrator, use `alice@example.com` and `Password123!`, then open **Admin** in the application navigation. Admins can view team members and assign roles. These are demo credentials only; replace them for any deployment.
 
