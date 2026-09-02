@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Task-Management-A2V2
+=======
+# Multi-user Task Management Application
+>>>>>>> bd30b15d77cc66af8177b26afa0f5defd0578231
 
 A full-stack task-management application for teams. It supports secure authentication, task assignment, comments, filters, and role-based access for administrators, managers, and members.
 
@@ -47,9 +51,14 @@ Run `npm run seed` before using these accounts. The seed command clears the conf
 
 | Role | Email | Password |
 | --- | --- | --- |
+<<<<<<< HEAD
 | Admin | `alice@example.com` | `Password123!` |
 | Manager | `bob@example.com` | `Password123!` |
 | Member | `charlie@example.com` | `Password123!` |
+=======
+| Admin | `sneha.shanmugam014@gmail.com` | `admin@123` |
+
+>>>>>>> bd30b15d77cc66af8177b26afa0f5defd0578231
 
 To log in as the administrator, use `alice@example.com` and `Password123!`, then open **Admin** in the application navigation. Admins can view team members and assign roles. These are demo credentials only; replace them for any deployment.
 
