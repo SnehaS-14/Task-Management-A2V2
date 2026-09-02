@@ -3,7 +3,11 @@ import { AuthenticatedRequest } from '../types';
 import * as authService from '../services/auth.service';
 import { asyncHandler } from '../utils/asyncHandler';
 import { sendSuccess } from '../utils/apiResponse';
-import { RegisterInput, LoginInput } from '../validators/auth';
+import {
+  RegisterInput,
+  LoginInput,
+  ChangePasswordInput,
+} from '../validators/auth';
 
 export const register = asyncHandler(
   async (req: Request, res: Response) => {
@@ -23,5 +27,12 @@ export const me = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
     const user = await authService.getUserProfile(req.user!.id);
     sendSuccess(res, { user });
+  }
+);
+
+export const updatePassword = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response) => {
+    await authService.changePassword(req.user!.id, req.body as ChangePasswordInput);
+    sendSuccess(res, { message: 'Password updated' });
   }
 );

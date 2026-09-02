@@ -6,7 +6,11 @@ import {
   UnauthorizedError,
   ValidationError,
 } from '../utils/errors';
-import { RegisterInput, LoginInput } from '../validators/auth';
+import {
+  RegisterInput,
+  LoginInput,
+  ChangePasswordInput,
+} from '../validators/auth';
 import { AuthUser } from '../types';
 
 export async function registerUser(
@@ -70,4 +74,21 @@ export async function getUserProfile(userId: string): Promise<SafeUser> {
     throw new ValidationError('User not found');
   }
   return toSafeUser(user);
+}
+
+export async function changePassword(
+  userId: string,
+  input: ChangePasswordInput
+): Promise<void> {
+  const user = (await User.findById(userId).select('+password')) as IUser | null;
+  if (!user) {
+    throw new ValidationError('User not found');
+  }
+
+  if (!(await user.comparePassword(input.currentPassword))) {
+    throw new UnauthorizedError('Current password is incorrect');
+  }
+
+  user.password = input.newPassword;
+  await user.save();
 }

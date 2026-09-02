@@ -154,4 +154,48 @@ describe('AUTH - Authentication endpoints', () => {
       expect(res.status).toBe(401);
     });
   });
+
+  describe('PATCH /api/auth/change-password', () => {
+    it('updates the password and rejects the old password on the next login', async () => {
+      const user = await registerUser(app, { email: 'password@example.com' });
+
+      const update = await request(app)
+        .patch('/api/auth/change-password')
+        .set(authHeader(user.token))
+        .send({
+          currentPassword: 'Password123!',
+          newPassword: 'NewPassword123!',
+          confirmPassword: 'NewPassword123!',
+        });
+
+      expect(update.status).toBe(200);
+
+      const oldLogin = await request(app).post('/api/auth/login').send({
+        email: 'password@example.com',
+        password: 'Password123!',
+      });
+      expect(oldLogin.status).toBe(401);
+
+      const newLogin = await request(app).post('/api/auth/login').send({
+        email: 'password@example.com',
+        password: 'NewPassword123!',
+      });
+      expect(newLogin.status).toBe(200);
+    });
+
+    it('rejects an incorrect current password', async () => {
+      const user = await registerUser(app, { email: 'password@example.com' });
+
+      const res = await request(app)
+        .patch('/api/auth/change-password')
+        .set(authHeader(user.token))
+        .send({
+          currentPassword: 'WrongPassword!',
+          newPassword: 'NewPassword123!',
+          confirmPassword: 'NewPassword123!',
+        });
+
+      expect(res.status).toBe(401);
+    });
+  });
 });

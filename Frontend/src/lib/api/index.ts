@@ -42,6 +42,14 @@ export async function getMe(): Promise<AuthUser> {
   return res.data.data.user
 }
 
+export async function changePassword(data: {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}): Promise<void> {
+  await apiClient.patch('/auth/change-password', data)
+}
+
 export async function getUsers(search?: string): Promise<User[]> {
   const res = await apiClient.get('/users', {
     params: search ? { search } : undefined,

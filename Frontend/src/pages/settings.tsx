@@ -6,7 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getAvatarColor, getInitials } from '@/lib/format'
 import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
-import { removeMyAvatar, updateMyProfile, uploadMyAvatar } from '@/lib/api'
+import {
+  changePassword,
+  getErrorMessage,
+  removeMyAvatar,
+  updateMyProfile,
+  uploadMyAvatar,
+} from '@/lib/api'
 import { JOB_ROLES } from '@/lib/types'
 
 type Tab = 'Profile' | 'Notifications' | 'Workspace' | 'Security'
@@ -29,6 +35,10 @@ export default function SettingsPage() {
   const [notifyTaskAssigned, setNotifyTaskAssigned] = useState(true)
   const [notifyMentions, setNotifyMentions] = useState(true)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [updatingPassword, setUpdatingPassword] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const tabs: Tab[] = ['Profile', 'Notifications', 'Workspace', 'Security']
@@ -89,6 +99,21 @@ export default function SettingsPage() {
       toast.error('Could not remove the photo. Please try again.')
     } finally {
       setUploadingAvatar(false)
+    }
+  }
+
+  const handleChangePassword = async () => {
+    setUpdatingPassword(true)
+    try {
+      await changePassword({ currentPassword, newPassword, confirmPassword })
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+      toast.success('Password updated. Use your new password next time you sign in.')
+    } catch (error) {
+      toast.error(getErrorMessage(error))
+    } finally {
+      setUpdatingPassword(false)
     }
   }
 
@@ -286,22 +311,23 @@ export default function SettingsPage() {
               <div className="mt-6 space-y-4">
                 <div>
                   <label className={labelClass}>Current password</label>
-                  <input type="password" className={inputClass} placeholder="••••••••" />
+                  <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className={inputClass} autoComplete="current-password" />
                 </div>
                 <div>
                   <label className={labelClass}>New password</label>
-                  <input type="password" className={inputClass} placeholder="••••••••" />
+                  <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={inputClass} autoComplete="new-password" />
                 </div>
                 <div>
                   <label className={labelClass}>Confirm new password</label>
-                  <input type="password" className={inputClass} placeholder="••••••••" />
+                  <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className={inputClass} autoComplete="new-password" />
                 </div>
                 <div className="pt-2">
                   <button
-                    onClick={() => toast.success('Password updated')}
-                    className="rounded-md bg-[#111315] px-4 py-1.5 text-[12px] font-semibold text-white hover:bg-[#2b2e31] transition-colors"
+                    onClick={handleChangePassword}
+                    disabled={updatingPassword}
+                    className="rounded-md bg-[#111315] px-4 py-1.5 text-[12px] font-semibold text-white hover:bg-[#2b2e31] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Update password
+                    {updatingPassword ? 'Updating...' : 'Update password'}
                   </button>
                 </div>
               </div>
